@@ -538,7 +538,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 483575031}
@@ -557,13 +557,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b454af7005bdee14e8ca1287e012d8f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  acceleration: 50
-  walkSpeed: 0
-  runSpeed: 0
-  jumpPower: 0
-  gravity: 0
-  fallMultiplier: 0
-  coyoteTime: 0
+  acceleration: 6
+  runSpeed: 12
+  jumpPower: 12
+  gravity: 2
+  fallMultiplier: 5
+  apexHang: 1
+  coyoteTime: 0.2
   groundCheck: {fileID: 1465893436}
   groundLayer:
     serializedVersion: 2
@@ -630,7 +630,7 @@ Rigidbody2D:
   m_LinearDamping: 0
   m_AngularDamping: 0
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: eb4f09c1bf1a71d438ff440160a8dadf, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -738,22 +738,6 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 31338cf4-98ad-490d-b107-427a649b5917
     m_ActionName: 'Player/Jump[/Keyboard/space,/Keyboard/w,/Keyboard/upArrow]'
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 714595800}
-        m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
-        m_MethodName: Sprint
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 040020e3-2ee2-4f85-bb3d-73778cdbbf01
-    m_ActionName: 'Player/Sprint[/Keyboard/leftShift]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

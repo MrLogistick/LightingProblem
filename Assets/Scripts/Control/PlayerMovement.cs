@@ -5,24 +5,25 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Horizontal Movement")]
+    [SerializeField] float acceleration;
+    [SerializeField] float runSpeed;
     float moveSpeed;
     float targetSpeed;
-    [SerializeField] float acceleration;
-    [SerializeField] float walkSpeed;
-    [SerializeField] float runSpeed;
     float horizontal;
 
     [Header("Vertical Movement")]
     [SerializeField] float jumpPower;
     [SerializeField] float gravity;
     [SerializeField] float fallMultiplier;
+    [SerializeField] float apexHang;
     [SerializeField] float coyoteTime;
+    float apexElapsed;
     float ctElapsed;
 
     [Header("References")]
-    Rigidbody2D rb;
     [SerializeField] Transform groundCheck;
     [SerializeField] LayerMask groundLayer;
+    Rigidbody2D rb;
 
     void Start() {
         rb = GetComponent<Rigidbody2D>();
@@ -35,23 +36,32 @@ public class PlayerMovement : MonoBehaviour
         else {
             ctElapsed -= Time.deltaTime;
         }
+
+        if (rb.linearVelocityY > 0) {
+            apexElapsed = 0;
+            rb.gravityScale = gravity;
+        }
+        else if (!IsGrounded()) {
+            if (apexElapsed < apexHang) {
+                rb.linearVelocityY = 0;
+                rb.gravityScale = 0;
+                apexElapsed += Time.deltaTime;
+            }
+            else {
+                rb.gravityScale = fallMultiplier;
+            }
+        }
+
+        targetSpeed = horizontal * runSpeed;
     }
 
     void FixedUpdate() {
-        rb.AddForceX(acceleration * horizontal, ForceMode2D.Force);
+        moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, acceleration * Time.fixedDeltaTime);
+        rb.linearVelocityX = moveSpeed;
     }
 
     public void Move(InputAction.CallbackContext context) {
         horizontal = context.ReadValue<float>();
-    }
-
-    public void Sprint(InputAction.CallbackContext context) {
-        if (context.performed) {
-            targetSpeed = runSpeed;
-        }
-        if (context.canceled) {
-            targetSpeed = walkSpeed;
-        }
     }
 
     public void Jump(InputAction.CallbackContext context) {
