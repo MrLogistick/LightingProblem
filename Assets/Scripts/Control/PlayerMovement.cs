@@ -1,18 +1,70 @@
+using System.Numerics;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("Horizontal Movement")]
+    float moveSpeed;
+    float targetSpeed;
+    [SerializeField] float acceleration;
+    [SerializeField] float walkSpeed;
+    [SerializeField] float runSpeed;
+    float horizontal;
+
+    [Header("Vertical Movement")]
+    [SerializeField] float jumpPower;
     [SerializeField] float gravity;
-    [SerializeField] float groundCheckDistance;
+    [SerializeField] float fallMultiplier;
+    [SerializeField] float coyoteTime;
+    float ctElapsed;
+
+    [Header("References")]
+    Rigidbody2D rb;
+    [SerializeField] Transform groundCheck;
     [SerializeField] LayerMask groundLayer;
 
-    void Update() {
-        print(IsGrounded());
-        Debug.DrawRay(transform.position, -transform.up * groundCheckDistance, Color.red);
+    void Start() {
+        rb = GetComponent<Rigidbody2D>();
     }
-    
+
+    void Update() {
+        if (IsGrounded()) {
+            ctElapsed = coyoteTime;
+        }
+        else {
+            ctElapsed -= Time.deltaTime;
+        }
+    }
+
+    void FixedUpdate() {
+        rb.AddForceX(acceleration * horizontal, ForceMode2D.Force);
+    }
+
+    public void Move(InputAction.CallbackContext context) {
+        horizontal = context.ReadValue<float>();
+    }
+
+    public void Sprint(InputAction.CallbackContext context) {
+        if (context.performed) {
+            targetSpeed = runSpeed;
+        }
+        if (context.canceled) {
+            targetSpeed = walkSpeed;
+        }
+    }
+
+    public void Jump(InputAction.CallbackContext context) {
+        if (context.performed && ctElapsed > 0) {
+            rb.linearVelocityY = jumpPower;
+            ctElapsed = 0;
+        }
+        if (context.canceled && rb.linearVelocityY > 0) {
+            rb.linearVelocityY *= 0.5f;
+        }
+    }
+
     bool IsGrounded() {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, -transform.up, groundCheckDistance, groundLayer);
-        return hit.collider != null;
+        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
 }
