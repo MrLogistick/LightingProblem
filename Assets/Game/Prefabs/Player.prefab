@@ -223,7 +223,7 @@ MonoBehaviour:
   jumpBufferTime: 0.2
   headRayPos: {fileID: 2609513007237534963}
   bodyRayPos: {fileID: 3059731174606698066}
-  rayDistance: 1
+  rayDistance: 0.7
   maxHangVelocity: 0.5
   vaultPower: 15
   groundCheck: {fileID: 8477318222272192965}
