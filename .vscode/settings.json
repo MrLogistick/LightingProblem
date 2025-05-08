@@ -56,5 +56,9 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "LightingProblem.sln"
+    "dotnet.defaultSolution": "LightingProblem.sln",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[csharp]": {
+        "editor.defaultFormatter": "ms-dotnettools.csharp"
+    }
 }

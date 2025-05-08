@@ -23,26 +23,21 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float jumpBufferTime;
     float jbElapsed;
 
-    [Header("Vaulting")]
-    [SerializeField] Vector2 topCastPosition;
-    [SerializeField] Vector2 centreCastPosition;
-    [SerializeField] float rayDistance;
-    [SerializeField] Vector2 vaultEndPosition;
-
     [Header("References")]
+    [SerializeField] Transform topCastPosition;
+    [SerializeField] Transform centreCastPosition;
     [SerializeField] Transform groundCheck;
     [SerializeField] LayerMask groundLayer;
     Rigidbody2D rb;
 
     void Start() {
         rb = GetComponent<Rigidbody2D>();
+        EnableControls();
     }
 
     void Update() {
         targetSpeed = horizontal * (isRunning ? runSpeed : walkSpeed);
         jbElapsed -= Time.deltaTime;
-
-        VaultCheck();
 
         if (IsGrounded()) {
             ctElapsed = coyoteTime;
@@ -80,11 +75,9 @@ public class PlayerMovement : MonoBehaviour
     public void Move(InputAction.CallbackContext context) {
         horizontal = context.ReadValue<float>();
 
-        if (horizontal < 0) {
-            transform.localScale = new Vector3(-1, 1.8f, 1);
-        }
-        if (horizontal > 0) {
-            transform.localScale = new Vector3(1, 1.8f, 1);
+        if (horizontal != 0) {
+            float dir = Mathf.Sign(horizontal);
+            transform.localScale = new Vector3(dir, 1.8f, 1);
         }
     }
 
@@ -103,23 +96,17 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    void VaultCheck() {
-        RaycastHit2D topHit = Physics2D.Raycast(topCastPosition, transform.right, rayDistance, groundLayer);
-        RaycastHit2D centerHit = Physics2D.Raycast(centreCastPosition, transform.right, rayDistance, groundLayer);
-
-        // Debug lines to visualize the raycasts
-        Debug.DrawLine(topCastPosition, topCastPosition + (Vector2)transform.right * rayDistance, Color.green);
-        Debug.DrawLine(centreCastPosition, centreCastPosition + (Vector2)transform.right * rayDistance, Color.green);
-
-        // Vault condition: top is clear, center is blocked
-        if (topHit.collider == null && centerHit.collider != null)
-        {
-            Vector2 currentPos = transform.position;
-            transform.position = currentPos + vaultEndPosition; // vaultEndPosition should be relative (offset)
-        }
-    }
-
     bool IsGrounded() {
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+    }
+
+    public void EnableControls() {
+        PlayerInput playerInput = GetComponent<PlayerInput>();
+        playerInput.enabled = true;
+    }
+
+    public void DisableControls() {
+        PlayerInput playerInput = GetComponent<PlayerInput>();
+        playerInput.enabled = false;
     }
 }
